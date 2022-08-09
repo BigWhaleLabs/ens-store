@@ -103,11 +103,15 @@ export class ContractNamesStore extends PersistableStore {
     [contractAddress: string]: Promise<string | undefined> | undefined
   }
 
-  private disallowList: string[]
+  private disallowList = [
+    'requestedNames',
+    'contractNames',
+    'requestedSymbols',
+    'contractSymbols',
+  ]
 
-  constructor(disallowList: string[]) {
+  constructor() {
     super()
-    this.disallowList = disallowList
   }
 
   get contractNames() {
