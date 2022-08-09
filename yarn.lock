@@ -32,10 +32,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@big-whale-labs/constants@npm:^0.1.18":
-  version: 0.1.18
-  resolution: "@big-whale-labs/constants@npm:0.1.18"
-  checksum: a9f17a827a571fb4b4a1ecd10731768f6a35a849123ad0b50113e38f978435d60af596fe638a6ff6199cc8210e5690edc4dd78b50e4454ff9d2d07a205531171
+"@big-whale-labs/constants@npm:^0.1.19":
+  version: 0.1.19
+  resolution: "@big-whale-labs/constants@npm:0.1.19"
+  checksum: d33edd13e91c28d867d7f25cecc640fc417f89ffd4915418508024e40de7111787e68f0f98d51a49b403cb3beaec16946c66d1d9d706579c1476cb58d56da1aa
   languageName: node
   linkType: hard
 
@@ -46,11 +46,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@big-whale-labs/store-utils@workspace:.":
+"@big-whale-labs/stores@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@big-whale-labs/store-utils@workspace:."
+  resolution: "@big-whale-labs/stores@workspace:."
   dependencies:
-    "@big-whale-labs/constants": ^0.1.18
+    "@big-whale-labs/constants": ^0.1.19
     "@big-whale-labs/seal-cred-ledger-contract": ^0.2.6
     "@types/node": ^18.0.3
     "@typescript-eslint/eslint-plugin": ^5.30.6
