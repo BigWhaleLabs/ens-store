@@ -40,14 +40,14 @@ export class PersistableStore {
 
   makePersistent(encrypt = false, encryptionKey?: string) {
     if (encrypt) {
-      if (encryptionKey && !PersistableStore.ls) {
+      if (!encryptionKey)
+        throw new Error('Encryption key is required if encryption is enabled')
+      if (!PersistableStore.ls) {
         PersistableStore.ls = new SequreLS({
           encodingType: 'des',
           isCompression: false,
           encryptionSecret: encryptionKey,
         })
-      } else {
-        throw new Error('Encryption key is required if encryption is enabled')
       }
     }
     // Start persisting
