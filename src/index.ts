@@ -39,10 +39,6 @@ export class PersistableStore {
   }
 
   makePersistent(encrypt = false, encryptionKey?: string) {
-    // Start persisting
-    subscribe(this, () => {
-      this.persist(encrypt)
-    })
     if (encrypt) {
       if (encryptionKey && !PersistableStore.ls) {
         PersistableStore.ls = new SequreLS({
@@ -54,6 +50,10 @@ export class PersistableStore {
         throw new Error('Encryption key is required if encryption is enabled')
       }
     }
+    // Start persisting
+    subscribe(this, () => {
+      this.persist(encrypt)
+    })
     // Recover the store
     if (encrypt && this.checkIfJsonFormat(this.persistanceName)) {
       PersistableStore.ls.set(
