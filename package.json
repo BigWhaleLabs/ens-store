@@ -1,12 +1,12 @@
 {
-  "name": "@big-whale-labs/store-utils",
+  "name": "@big-whale-labs/stores",
   "version": "0.1.5",
   "description": "Store utils and helpers",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BigWhaleLabs/store-utils"
+    "url": "git+https://github.com/BigWhaleLabs/stores"
   },
   "license": "MIT",
   "files": [
