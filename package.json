@@ -1,7 +1,7 @@
 {
   "name": "@big-whale-labs/stores",
   "version": "0.1.7",
-  "description": "Store utils and helpers",
+  "description": "Valtio stores used in BWL ",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": {
@@ -26,13 +26,13 @@
     "prepublishOnly": "yarn lint && yarn build"
   },
   "devDependencies": {
-    "@types/node": "^18.0.3",
-    "@typescript-eslint/eslint-plugin": "^5.30.6",
-    "@typescript-eslint/parser": "^5.30.6",
-    "eslint": "^8.19.0",
+    "@types/node": "^18.6.5",
+    "@typescript-eslint/eslint-plugin": "^5.33.0",
+    "@typescript-eslint/parser": "^5.33.0",
+    "eslint": "^8.21.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-no-relative-import-paths": "^1.3.4",
+    "eslint-plugin-no-relative-import-paths": "^1.4.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-sort-imports-es6-autofix": "^0.6.0",
