@@ -58,7 +58,6 @@ __metadata:
     eslint: ^8.21.0
     eslint-config-prettier: ^8.5.0
     eslint-plugin-import: ^2.26.0
-    eslint-plugin-no-relative-import-paths: ^1.4.0
     eslint-plugin-node: ^11.1.0
     eslint-plugin-prettier: ^4.2.1
     eslint-plugin-sort-imports-es6-autofix: ^0.6.0
@@ -1749,13 +1748,6 @@ __metadata:
   peerDependencies:
     eslint: ^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8
   checksum: 0bf77ad80339554481eafa2b1967449e1f816b94c7a6f9614ce33fb4083c4e6c050f10d241dd50b4975d47922880a34de1e42ea9d8e6fd663ebb768baa67e655
-  languageName: node
-  linkType: hard
-
-"eslint-plugin-no-relative-import-paths@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "eslint-plugin-no-relative-import-paths@npm:1.4.0"
-  checksum: 688ecb019467b2ff5622ad1e2013f1c885d092e0ba7131f244e6341b1b2ffd38b30cc72a2581237314d046695fda7d21ae5f97b6939d13a699a412aed3317b60
   languageName: node
   linkType: hard
 

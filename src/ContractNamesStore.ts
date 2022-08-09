@@ -1,5 +1,5 @@
 import { ERC721__factory } from '@big-whale-labs/seal-cred-ledger-contract'
-import { PersistableStore } from '@/PersistableStore'
+import { PersistableStore } from './PersistableStore'
 import { RESERVED_CONTRACT_METADATA } from '@big-whale-labs/constants'
 import type { Provider } from '@ethersproject/providers'
 
