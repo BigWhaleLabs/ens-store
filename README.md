@@ -1,11 +1,6 @@
 # Stores
 
-Diffrent stores used accross BWL projects. The list of the most up-to-date NPM packages can be found at [npmjs.com/org/big-whale-labs](https://www.npmjs.com/org/big-whale-labs).
-
-## Local launch
-
-1. Install dependencies with `yarn`
-2. Develop
+Diffrent stores used accross BWL projects.
 
 ## Development in conjunction with another project
 
@@ -16,6 +11,5 @@ Diffrent stores used accross BWL projects. The list of the most up-to-date NPM p
 
 ## Available Scripts
 
-- `yarn start` — development mode
 - `yarn build` — build the code
 - `yarn release` — create a release and publish the package
