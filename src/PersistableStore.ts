@@ -18,7 +18,8 @@ export class PersistableStore {
       : localStorage.setItem(this.persistanceName, json)
   }
 
-  makePersistent(encryptionKey?: string, encrypt = true) {
+  makePersistent(encryptionKey?: string) {
+    const encrypt = !!encryptionKey
     if (encrypt) {
       if (!encryptionKey)
         throw new Error('Encryption key is required if encryption is enabled')
