@@ -1,16 +1,16 @@
 {
-  "name": "@big-whale-labs/ens-store",
-  "version": "0.1.18",
-  "description": "ENS store that could fetch ENS names",
+  "name": "@big-whale-labs/store-utils",
+  "version": "0.1.0",
+  "description": "Store utils and helpers",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BigWhaleLabs/ens-store"
+    "url": "git+https://github.com/BigWhaleLabs/store-utils"
   },
   "license": "MIT",
   "files": [
-    "dist/**/*"
+    "dist/*"
   ],
   "np": {
     "2fa": false,
@@ -43,6 +43,10 @@
   },
   "packageManager": "yarn@3.1.0",
   "dependencies": {
-    "ethers": "^5.6.9"
+    "@big-whale-labs/constants": "^0.1.18",
+    "@big-whale-labs/seal-cred-ledger-contract": "^0.2.6",
+    "ethers": "^5.6.9",
+    "secure-ls": "^1.2.6",
+    "valtio": "^1.6.3"
   }
 }

@@ -1,27 +1,22 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "module": "commonjs",
-    "target": "es6",
-    "lib": ["es2015"],
+    "target": "esnext",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
     "moduleResolution": "node",
-    "sourceMap": true,
-    "outDir": "dist",
-    "baseUrl": "src",
-    "paths": {
-      "@/*": ["*"]
-    },
-    "plugins": [
-      { "transform": "typescript-transform-paths", "preferBuiltins": false },
-      {
-        "preferBuiltins": false,
-        "transform": "typescript-transform-paths",
-        "afterDeclarations": true
-      }
-    ],
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "strict": true
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "baseUrl": "src"
   },
-  "include": ["src/**/*"]
+  "include": ["src"]
 }
