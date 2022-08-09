@@ -43,7 +43,7 @@
   },
   "packageManager": "yarn@3.1.0",
   "dependencies": {
-    "@big-whale-labs/constants": "^0.1.18",
+    "@big-whale-labs/constants": "^0.1.19",
     "@big-whale-labs/seal-cred-ledger-contract": "^0.2.6",
     "ethers": "^5.6.9",
     "secure-ls": "^1.2.6",
