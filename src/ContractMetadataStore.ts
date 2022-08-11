@@ -3,7 +3,7 @@ import { PersistableStore } from './PersistableStore'
 import { RESERVED_CONTRACT_METADATA } from '@big-whale-labs/constants'
 import type { Provider } from '@ethersproject/providers'
 
-export class ContractNamesStore extends PersistableStore {
+export class ContractMetadataStore extends PersistableStore {
   savedContractNames = {} as {
     [contractAddress: string]: string | undefined
   }
