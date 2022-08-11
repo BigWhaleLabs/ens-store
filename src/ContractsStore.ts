@@ -6,7 +6,7 @@ import ContractSynchronizer, {
 import Network from 'models/Network'
 import transformObjectValues from 'helpers/transformObjectValues'
 
-class ContractsStore extends PersistableStore {
+export class ContractsStore extends PersistableStore {
   connectedAccounts: { [account: string]: ContractSynchronizer } = {}
   currentBlock?: number
   addressToTokenIds?: Promise<{ [address: string]: string[] } | undefined>
@@ -76,5 +76,3 @@ class ContractsStore extends PersistableStore {
         : Promise.resolve(await request)
   }
 }
-
-export default ContractsStore
