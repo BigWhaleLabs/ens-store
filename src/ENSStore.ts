@@ -8,7 +8,7 @@ export class ENSStore {
     this.provider = provider
   }
 
-  fetchEnsName(address: string) {
+  fetcENSName(address: string) {
     if (this.ensNames[address]) {
       return
     }
