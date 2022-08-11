@@ -1,6 +1,6 @@
 import { providers } from 'ethers'
 
-export class EnsStore {
+export class ENSStore {
   provider: providers.Provider
   ensNames: { [address: string]: Promise<string | null> | undefined } = {}
 
