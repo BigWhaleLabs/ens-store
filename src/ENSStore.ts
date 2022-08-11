@@ -2,16 +2,16 @@ import { providers } from 'ethers'
 
 export class ENSStore {
   provider: providers.Provider
-  ensNames: { [address: string]: Promise<string | null> | undefined } = {}
+  eNSNames: { [address: string]: Promise<string | null> | undefined } = {}
 
   constructor(provider: providers.Provider) {
     this.provider = provider
   }
 
   fetchENSName(address: string) {
-    if (this.ensNames[address]) {
+    if (this.eNSNames[address]) {
       return
     }
-    this.ensNames[address] = this.provider.lookupAddress(address)
+    this.eNSNames[address] = this.provider.lookupAddress(address)
   }
 }
