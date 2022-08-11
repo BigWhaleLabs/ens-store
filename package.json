@@ -1,6 +1,6 @@
 {
   "name": "@big-whale-labs/stores",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Valtio stores used in BWL ",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
