@@ -1,10 +1,10 @@
-import { providers } from 'ethers'
+import type { Provider } from '@ethersproject/providers'
 
 export class ENSStore {
-  provider: providers.Provider
+  provider: Provider
   eNSNames: { [address: string]: Promise<string | null> | undefined } = {}
 
-  constructor(provider: providers.Provider) {
+  constructor(provider: Provider) {
     this.provider = provider
   }
 

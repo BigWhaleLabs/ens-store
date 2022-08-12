@@ -52,7 +52,9 @@ export class ContractsStore extends PersistableStore {
     accountChange?: boolean,
     startBlock?: number
   ) {
-    if (!this.currentBlock) this.currentBlock = await this.fetchBlockNumber()
+    if (!this.currentBlock) {
+      this.currentBlock = await this.fetchBlockNumber()
+    }
 
     if (!this.connectedAccounts[account])
       this.connectedAccounts[account] = new ContractSynchronizer(
