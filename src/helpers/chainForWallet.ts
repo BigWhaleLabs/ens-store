@@ -1,15 +1,10 @@
 import { hexValue } from 'ethers/lib/utils'
+import networkChainIdToName from 'models/networkChainIdToName'
 
 export default function (id: number) {
   const chainId = hexValue(id)
 
-  const idToName: { [chainId: number]: string } = {
-    1: 'mainnet',
-    3: 'ropsten',
-    4: 'rinkeby',
-    5: 'goerli',
-  }
-  const name = idToName[id]
+  const name = networkChainIdToName[chainId]
   const firstCapitalName = name.charAt(0).toUpperCase() + name.slice(1)
   const blockExplorerUrl =
     name === 'mainnet'

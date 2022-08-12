@@ -1,17 +1,12 @@
-import { NotificationsStore } from './NotificationStore'
 import { PersistableStore } from './PersistableStore'
 import { Web3Provider } from '@ethersproject/providers'
-import { proxy } from 'valtio'
 import { serializeError } from 'eth-rpc-errors'
 import chainForWallet from 'helpers/chainForWallet'
 import handleError, { ErrorList } from 'helpers/handleError'
 import networkChainIdToName from 'models/networkChainIdToName'
-import setBeforeUnload from 'helpers/setBeforeUnload'
 import web3Modal from 'helpers/web3Modal'
 
 let provider: Web3Provider
-const storeProxy = proxy(new NotificationsStore()).makePersistent()
-setBeforeUnload(() => (storeProxy.showTwitterShare = false))
 
 export class WalletStore extends PersistableStore {
   account?: string
@@ -67,14 +62,6 @@ export class WalletStore extends PersistableStore {
     }
   }
 
-  async signMessage(message: string) {
-    if (!provider) throw new Error('No provider')
-
-    const signer = provider.getSigner()
-    const signature = await signer.signMessage(message)
-    return signature
-  }
-
   private async checkNetwork(provider: Web3Provider, userNetwork: string) {
     if (userNetwork === this.ethNetwork) return (this.needNetworkChange = false)
 
@@ -108,7 +95,6 @@ export class WalletStore extends PersistableStore {
     this.walletLoading = true
     const accounts = await provider.listAccounts()
     this.account = accounts[0]
-    storeProxy.showTwitterShare = false
     this.walletLoading = false
   }
 
@@ -141,7 +127,6 @@ export class WalletStore extends PersistableStore {
   }
 
   private clearData() {
-    storeProxy.showTwitterShare = false
     web3Modal(this.appName).clearCachedProvider()
     this.account = undefined
   }
