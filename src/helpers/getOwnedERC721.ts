@@ -1,4 +1,5 @@
-import { providers, utils } from 'ethers'
+import { utils } from 'ethers'
+import type { Filter, Log } from '@ethersproject/providers'
 
 const transferEventInterface = new utils.Interface([
   'event Transfer(address indexed from, address indexed to, uint indexed tokenId)',
@@ -26,7 +27,7 @@ export default async function (
   fromBlock = 0,
   toBlock: number,
   addressToTokenIds: { [address: string]: string[] },
-  getLogs: (filter: providers.Filter) => Promise<providers.Log[]>,
+  getLogs: (filter: Filter) => Promise<Log[]>,
   skipTransactions?: Set<string>
 ) {
   const receivedLogs = await getLogs({

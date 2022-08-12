@@ -1,6 +1,7 @@
-import { ContractReceipt, providers } from 'ethers'
+import { ContractReceipt } from 'ethers'
 import MintedToken from '../models/MintedToken'
 import getOwnedERC721, { isTransferEvent, parseLogData } from './getOwnedERC721'
+import type { Filter, Log } from '@ethersproject/providers'
 
 export interface ContractSynchronizerSchema {
   account: string
@@ -60,7 +61,7 @@ export default class ContractSynchronizer {
 
   async syncAddressToTokenIds(
     blockId: number,
-    getLogs: (filter: providers.Filter) => Promise<providers.Log[]>
+    getLogs: (filter: Filter) => Promise<Log[]>
   ) {
     if (!this.locked && blockId !== this.synchronizedBlockId) {
       this.locked = true

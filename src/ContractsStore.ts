@@ -4,15 +4,14 @@ import ContractSynchronizer, {
 } from './helpers/ContractSynchronizer'
 import Network from './models/Network'
 import transformObjectValues from './helpers/transformObjectValues'
-import type { Provider } from '@ethersproject/providers'
-import type { providers } from 'ethers/lib/ethers'
+import type { Filter, Log, Provider } from '@ethersproject/providers'
 
 export class ContractsStore extends PersistableStore {
   connectedAccounts: { [account: string]: ContractSynchronizer } = {}
   currentBlock?: number
   addressToTokenIds?: Promise<{ [address: string]: string[] } | undefined>
 
-  getLogs: (filter: providers.Filter) => Promise<providers.Log[]>
+  getLogs: (filter: Filter) => Promise<Log[]>
 
   get persistanceName() {
     return `${this.constructor.name}_${this.network}`
