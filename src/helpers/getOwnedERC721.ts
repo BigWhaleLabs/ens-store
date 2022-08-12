@@ -26,16 +26,16 @@ export default async function (
   fromBlock = 0,
   toBlock: number,
   addressToTokenIds: { [address: string]: string[] },
-  provider: providers.Provider,
+  getLogs: (filter: providers.Filter) => Promise<providers.Log[]>,
   skipTransactions?: Set<string>
 ) {
-  const receivedLogs = await provider.getLogs({
+  const receivedLogs = await getLogs({
     fromBlock,
     toBlock,
     topics: [utils.id(sig), null, utils.hexZeroPad(account, 32)],
   })
 
-  const sentLogs = await provider.getLogs({
+  const sentLogs = await getLogs({
     fromBlock,
     toBlock,
     topics: [utils.id(sig), utils.hexZeroPad(account, 32)],

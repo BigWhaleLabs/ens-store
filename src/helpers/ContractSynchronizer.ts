@@ -58,7 +58,10 @@ export default class ContractSynchronizer {
     }
   }
 
-  async syncAddressToTokenIds(blockId: number, provider: providers.Provider) {
+  async syncAddressToTokenIds(
+    blockId: number,
+    getLogs: (filter: providers.Filter) => Promise<providers.Log[]>
+  ) {
     if (!this.locked && blockId !== this.synchronizedBlockId) {
       this.locked = true
 
@@ -72,7 +75,7 @@ export default class ContractSynchronizer {
         fromBlock,
         blockId,
         { ...this.mapAddressToTokenIds },
-        provider,
+        getLogs,
         this.skipTransactions
       )
 

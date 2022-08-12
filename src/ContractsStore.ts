@@ -11,6 +11,8 @@ export class ContractsStore extends PersistableStore {
   currentBlock?: number
   addressToTokenIds?: Promise<{ [address: string]: string[] } | undefined>
 
+  getLogs: (filter: providers.Filter) => Promise<providers.Log[]>
+
   get persistanceName() {
     return `${this.constructor.name}_${this.network}`
   }
@@ -22,6 +24,8 @@ export class ContractsStore extends PersistableStore {
     super()
     this.provider = provider
     this.network = network
+    // for some reasons valtio lost long prototype chain from provider and it's not possible to use this.getLogs directly
+    this.getLogs = provider.getLogs.bind(provider)
   }
 
   replacer = (key: string, value: unknown) => {
@@ -67,7 +71,7 @@ export class ContractsStore extends PersistableStore {
 
     const request = this.connectedAccounts[account].syncAddressToTokenIds(
       this.currentBlock,
-      this.provider
+      this.getLogs
     )
 
     this.addressToTokenIds =
