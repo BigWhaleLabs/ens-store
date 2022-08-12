@@ -1,9 +1,6 @@
 import { ContractReceipt, providers } from 'ethers'
-import MintedToken from 'models/MintedToken'
-import getOwnedERC721, {
-  isTransferEvent,
-  parseLogData,
-} from 'helpers/getOwnedERC721'
+import MintedToken from '../models/MintedToken'
+import getOwnedERC721, { isTransferEvent, parseLogData } from './getOwnedERC721'
 
 export interface ContractSynchronizerSchema {
   account: string

@@ -1,10 +1,10 @@
-import { PersistableStore } from 'PersistableStore'
+import { PersistableStore } from './PersistableStore'
 import { providers } from 'ethers'
 import ContractSynchronizer, {
   ContractSynchronizerSchema,
-} from 'helpers/ContractSynchronizer'
-import Network from 'models/Network'
-import transformObjectValues from 'helpers/transformObjectValues'
+} from './helpers/ContractSynchronizer'
+import Network from './models/Network'
+import transformObjectValues from './helpers/transformObjectValues'
 
 export class ContractsStore extends PersistableStore {
   connectedAccounts: { [account: string]: ContractSynchronizer } = {}
