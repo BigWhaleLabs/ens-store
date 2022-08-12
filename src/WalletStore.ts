@@ -1,20 +1,11 @@
-import { ExternalProvider, Web3Provider } from '@ethersproject/providers'
 import { NotificationsStore } from './NotificationStore'
 import { PersistableStore } from './PersistableStore'
+import { Web3Provider } from '@ethersproject/providers'
 import { proxy } from 'valtio'
-import { requestContractMetadata } from 'helpers/attestor'
 import { serializeError } from 'eth-rpc-errors'
-import BaseProof from 'helpers/BaseProof'
-import ERC721Proof from 'helpers/ERC721Proof'
-import EmailProof from 'helpers/EmailProof'
-import Network from 'models/Network'
 import chainForWallet from 'helpers/chainForWallet'
-import createERC721Badge from 'helpers/createERC721Badge'
-import createEmailBadge from 'helpers/createEmailBadge'
-import createExternalERC721Badge from 'helpers/createExternalERC721Badge'
 import handleError, { ErrorList } from 'helpers/handleError'
 import networkChainIdToName from 'models/networkChainIdToName'
-import relayProvider from 'helpers/providers/relayProvider'
 import setBeforeUnload from 'helpers/setBeforeUnload'
 import web3Modal from 'helpers/web3Modal'
 
@@ -25,6 +16,7 @@ setBeforeUnload(() => (storeProxy.showTwitterShare = false))
 export class WalletStore extends PersistableStore {
   account?: string
   ethNetwork: string
+  appName: string
   walletLoading = false
   mintLoading = false
   needNetworkChange = false
@@ -32,9 +24,10 @@ export class WalletStore extends PersistableStore {
     [address: string]: boolean
   }
 
-  constructor(ethNetwork: string) {
+  constructor(ethNetwork: string, appName: string) {
     super()
     this.ethNetwork = ethNetwork
+    this.appName = appName
   }
 
   replacer = (key: string, value: unknown) => {
@@ -48,15 +41,15 @@ export class WalletStore extends PersistableStore {
   }
 
   get cachedProvider() {
-    return web3Modal.cachedProvider
+    return web3Modal(this.appName).cachedProvider
   }
 
   async connect(clearCachedProvider = false) {
     this.walletLoading = true
     try {
-      if (clearCachedProvider) web3Modal.clearCachedProvider()
+      if (clearCachedProvider) web3Modal(this.appName).clearCachedProvider()
 
-      const instance = await web3Modal.connect()
+      const instance = await web3Modal(this.appName).connect()
       provider = new Web3Provider(instance)
       const userNetwork = (await provider.getNetwork()).name
       await this.checkNetwork(provider, userNetwork)
@@ -80,43 +73,6 @@ export class WalletStore extends PersistableStore {
     const signer = provider.getSigner()
     const signature = await signer.signMessage(message)
     return signature
-  }
-
-  async mintDerivative(proof: BaseProof, verifyURL: string) {
-    if (!provider) throw new Error('No provider found')
-
-    const gsnProvider = await relayProvider(provider)
-
-    const ethersProvider = new Web3Provider(
-      gsnProvider as unknown as ExternalProvider
-    )
-
-    try {
-      if (proof instanceof ERC721Proof) {
-        if (proof.network === Network.Goerli)
-          return createERC721Badge(ethersProvider, proof)
-
-        const signature = await requestContractMetadata(
-          proof.network,
-          proof.contract,
-          verifyURL
-        )
-        return createExternalERC721Badge(
-          ethersProvider,
-          proof,
-          signature.message,
-          signature.signature
-        )
-      }
-
-      if (proof instanceof EmailProof)
-        return createEmailBadge(ethersProvider, proof)
-
-      throw new Error('Unknown proof type')
-    } catch (error) {
-      handleError(error)
-      throw error
-    }
   }
 
   private async checkNetwork(provider: Web3Provider, userNetwork: string) {
@@ -186,7 +142,7 @@ export class WalletStore extends PersistableStore {
 
   private clearData() {
     storeProxy.showTwitterShare = false
-    web3Modal.clearCachedProvider()
+    web3Modal(this.appName).clearCachedProvider()
     this.account = undefined
   }
 }
