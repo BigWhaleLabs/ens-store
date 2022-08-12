@@ -1,10 +1,11 @@
 import { PersistableStore } from './PersistableStore'
-import { providers } from 'ethers'
 import ContractSynchronizer, {
   ContractSynchronizerSchema,
 } from './helpers/ContractSynchronizer'
 import Network from './models/Network'
 import transformObjectValues from './helpers/transformObjectValues'
+import type { Provider } from '@ethersproject/providers'
+import type { providers } from 'ethers/lib/ethers'
 
 export class ContractsStore extends PersistableStore {
   connectedAccounts: { [account: string]: ContractSynchronizer } = {}
@@ -17,10 +18,10 @@ export class ContractsStore extends PersistableStore {
     return `${this.constructor.name}_${this.network}`
   }
 
-  provider: providers.Provider
+  provider: Provider
   network: Network
 
-  constructor(provider: providers.Provider, network: Network) {
+  constructor(provider: Provider, network: Network) {
     super()
     this.provider = provider
     this.network = network
