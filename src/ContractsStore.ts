@@ -1,31 +1,36 @@
 import { PersistableStore } from './PersistableStore'
 import ContractSynchronizer, {
   ContractSynchronizerSchema,
+  GetLog,
 } from './helpers/ContractSynchronizer'
 import Network from './models/Network'
 import transformObjectValues from './helpers/transformObjectValues'
-import type { Filter, Log, Provider } from '@ethersproject/providers'
+import type { Provider } from '@ethersproject/providers'
 
 export class ContractsStore extends PersistableStore {
   connectedAccounts: { [account: string]: ContractSynchronizer } = {}
   currentBlock?: number
   addressToTokenIds?: Promise<{ [address: string]: string[] } | undefined>
 
-  getLogs: (filter: Filter) => Promise<Log[]>
+  getLogs: GetLog
+  getHeavyLogs: GetLog
 
   get persistanceName() {
     return `${this.constructor.name}_${this.network}`
   }
 
   provider: Provider
+  heavyProvider: Provider
   network: Network
 
-  constructor(provider: Provider, network: Network) {
+  constructor(provider: Provider, heavyProvider: Provider, network: Network) {
     super()
     this.provider = provider
+    this.heavyProvider = heavyProvider
     this.network = network
     // for some reasons valtio lost long prototype chain from provider and it's not possible to use this.getLogs directly
     this.getLogs = provider.getLogs.bind(provider)
+    this.getHeavyLogs = heavyProvider.getLogs.bind(heavyProvider)
   }
 
   replacer = (key: string, value: unknown) => {
@@ -73,7 +78,8 @@ export class ContractsStore extends PersistableStore {
 
     const request = this.connectedAccounts[account].syncAddressToTokenIds(
       this.currentBlock,
-      this.getLogs
+      this.getLogs,
+      this.getHeavyLogs
     )
 
     this.addressToTokenIds =

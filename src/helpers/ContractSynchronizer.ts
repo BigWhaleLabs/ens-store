@@ -10,6 +10,8 @@ export interface ContractSynchronizerSchema {
   startBlock: number
 }
 
+export type GetLog = (filter: Filter) => Promise<Log[]>
+
 export default class ContractSynchronizer {
   account: string
   locked = false
@@ -61,7 +63,8 @@ export default class ContractSynchronizer {
 
   async syncAddressToTokenIds(
     blockId: number,
-    getLogs: (filter: Filter) => Promise<Log[]>
+    getLogs: GetLog,
+    getHeavyLogs: GetLog
   ) {
     if (!this.locked && blockId !== this.synchronizedBlockId) {
       this.locked = true
@@ -76,7 +79,7 @@ export default class ContractSynchronizer {
         fromBlock,
         blockId,
         { ...this.mapAddressToTokenIds },
-        getLogs,
+        fromBlock === 0 ? getHeavyLogs : getLogs,
         this.skipTransactions
       )
 
