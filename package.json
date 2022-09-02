@@ -42,7 +42,7 @@
   },
   "packageManager": "yarn@3.1.0",
   "dependencies": {
-    "@big-whale-labs/constants": "^0.1.21",
+    "@big-whale-labs/constants": "^0.1.22",
     "@big-whale-labs/seal-cred-ledger-contract": "^0.2.6",
     "@coinbase/wallet-sdk": "^3.4.1",
     "@ethersproject/providers": "^5.6.8",
