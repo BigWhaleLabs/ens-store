@@ -1,55 +1,78 @@
 import { ErrorList, handleError } from '@big-whale-labs/frontend-utils'
 import { ExternalProvider, Web3Provider } from '@ethersproject/providers'
-import { PersistableStore } from '@big-whale-labs/stores'
-import { proxy } from 'valtio'
-import { serializeError } from 'eth-rpc-errors'
-import chainForWallet from 'helpers/chainForWallet'
-import env from 'helpers/env'
-import hasFarcasterBadge from 'helpers/hasFarcasterBadge'
-import networkChainIdToName from 'models/networkChainIdToName'
-import relayProvider from 'helpers/providers/relayProvider'
-import web3Modal from 'helpers/web3Modal'
+import { PersistableStore } from './PersistableStore'
+import { hexValue } from 'ethers/lib/utils'
+import Web3Modal from 'web3modal'
+import getWeb3Modal from './helpers/getWeb3Modal'
+import type { RelayProvider } from '@opengsn/provider'
+import type { providers } from 'ethers'
 
 let provider: Web3Provider
 
-class WalletStore extends PersistableStore {
+export class WalletStore extends PersistableStore {
   account?: string
   walletLoading = false
   needNetworkChange = false
+  web3modal: Web3Modal
+  network: string
+  chainId: number
+  disallowList = [
+    'disallowList',
+    'account',
+    'cachedProvider',
+    'provider',
+    'walletLoading',
+    'web3modal',
+  ]
+
+  constructor(
+    rpc: string,
+    network: string,
+    appName: string,
+    chainId: number,
+    extendDisallowList: string[] = []
+  ) {
+    super()
+    this.web3modal = getWeb3Modal(rpc, network, appName)
+    this.network = network
+    this.chainId = chainId
+    this.disallowList = this.disallowList.concat(extendDisallowList)
+  }
 
   changeAccount(account?: string) {
     this.account = account
   }
 
   replacer = (key: string, value: unknown) => {
-    const disallowList = [
-      'account',
-      'cachedProvider',
-      'provider',
-      'walletLoading',
-    ]
-    return disallowList.includes(key) ? undefined : value
+    return this.disallowList.includes(key) ? undefined : value
   }
 
   get cachedProvider() {
-    return web3Modal.cachedProvider
+    return this.web3modal.cachedProvider
   }
 
   async connect(clearCachedProvider = false) {
     this.walletLoading = true
     try {
-      if (clearCachedProvider) web3Modal.clearCachedProvider()
+      if (provider) provider.removeAllListeners()
+      if (clearCachedProvider) this.web3modal.clearCachedProvider()
 
-      const instance = await web3Modal.connect()
-      provider = new Web3Provider(instance)
-      const userNetwork = (await provider.getNetwork()).name
-      await this.checkNetwork(provider, userNetwork)
-      if (this.needNetworkChange)
-        throw new Error(
-          ErrorList.wrongNetwork(userNetwork, env.VITE_ETH_NETWORK)
+      const instance = await this.web3modal.connect()
+      // We need this "any" networks so we could handle when users switch between networks with listeners without errors
+      provider = new Web3Provider(instance, 'any')
+
+      this.changeAccount(await this.getAccount())
+      if (!(await this.isNetworkRight(provider))) {
+        this.setNetworkAndDropAccount()
+        handleError(
+          new Error(
+            ErrorList.wrongNetwork(
+              await this.getUserNetworkName(provider),
+              this.network
+            )
+          )
         )
-      const account = (await provider.listAccounts())[0]
-      this.changeAccount(account)
+      }
       this.subscribeProvider(instance)
     } catch (error) {
       if (error === 'Modal closed by user') return
@@ -60,54 +83,45 @@ class WalletStore extends PersistableStore {
     }
   }
 
-  private async checkNetwork(provider: Web3Provider, userNetwork: string) {
-    const network = env.VITE_ETH_NETWORK
-    if (userNetwork === network) return (this.needNetworkChange = false)
-
-    this.needNetworkChange = true
-    await this.requestChangeNetwork(provider)
+  private async isNetworkRight(provider: Web3Provider) {
+    const userNetwork = await this.getUserNetworkName(provider)
+    return this.network === userNetwork
   }
 
-  private async requestChangeNetwork(provider: Web3Provider) {
-    const index = Object.values(networkChainIdToName).findIndex(
-      (name) => name === env.VITE_ETH_NETWORK
-    )
-    const chainId = Object.keys(networkChainIdToName)[index]
-
-    try {
-      await provider.send('wallet_switchEthereumChain', [{ chainId }])
-      this.needNetworkChange = false
-    } catch (error) {
-      const code = serializeError(error).code
-      if (code !== 4902) return
-
-      await provider.send('wallet_addEthereumChain', [chainForWallet()])
-      this.needNetworkChange = false
-    }
+  private async getUserNetworkName(provider: Web3Provider) {
+    return (await provider.getNetwork()).name
   }
 
   private async handleAccountChanged() {
     if (!provider) return
 
     this.walletLoading = true
-    const accounts = await provider.listAccounts()
-    const account = accounts[0]
-    this.changeAccount(account)
+    this.changeAccount(await this.getAccount())
     this.walletLoading = false
   }
 
-  signMessage(message: string) {
+  async signMessage(message: string) {
     if (!provider) throw new Error('No provider')
 
     const signer = provider.getSigner()
-    return signer.signMessage(message)
+    const signature = await signer.signMessage(message)
+    return signature
   }
 
-  get provider() {
-    return provider
+  private async getAccount() {
+    return (await provider.listAccounts())[0]
   }
 
-  async getSigner() {
+  private async switchNetwork() {
+    const chainId = hexValue(this.chainId)
+    await provider.send('wallet_switchEthereumChain', [{ chainId }])
+  }
+
+  async getSigner(
+    relayProvider: (
+      provider: providers.JsonRpcProvider | Web3Provider
+    ) => Promise<RelayProvider>
+  ) {
     if (!provider) throw new Error(ErrorList.noProvider)
 
     const gsnProvider = await relayProvider(provider)
@@ -117,44 +131,64 @@ class WalletStore extends PersistableStore {
     ).getSigner(0)
   }
 
-  private subscribeProvider(provider: Web3Provider) {
-    if (!provider.on) return
+  private setNetworkAndDropAccount() {
+    this.needNetworkChange = true
+    this.changeAccount()
+  }
 
-    provider.on('error', (error: Error) => {
+  private subscribeProvider(localProvider: Web3Provider) {
+    if (!localProvider.on) return
+
+    localProvider.on('error', (error: Error) => {
       handleError(error)
     })
 
-    provider.on('accountsChanged', (accounts: string[]) => {
+    localProvider.on('accountsChanged', (accounts: string[]) => {
       if (!accounts.length) this.clearData()
 
       this.changeAccount()
       void this.handleAccountChanged()
     })
-    provider.on('disconnect', (error: unknown) => {
-      if (provider) provider.removeAllListeners()
+    localProvider.on('disconnect', (error: Error) => {
+      // Sometimes this error fires when user switching between networks too fast, we should not clean data in this case
+      if (error.message.includes('Attempting to connect.'))
+        return handleError(error)
+
+      if (localProvider) localProvider.removeAllListeners()
       handleError(error)
       this.clearData()
     })
-    provider.on('chainChanged', async () => {
-      this.changeAccount()
-      await this.connect()
+    localProvider.on('chainChanged', async () => {
+      if (await this.isNetworkRight(provider)) {
+        this.needNetworkChange = false
+        this.changeAccount(await this.getAccount())
+        return
+      }
+      this.setNetworkAndDropAccount()
     })
   }
 
   private clearData() {
-    web3Modal.clearCachedProvider()
+    this.web3modal.clearCachedProvider()
     this.changeAccount()
+  }
+
+  getProvider() {
+    return provider
   }
 
   exit() {
     this.clearData()
   }
+
+  changeNetworkOrConnect({
+    clearCachedProvider = false,
+    needNetworkChange,
+  }: {
+    clearCachedProvider: boolean
+    needNetworkChange?: boolean
+  }) {
+    if (needNetworkChange || this.needNetworkChange) return this.switchNetwork()
+    return this.connect(clearCachedProvider)
+  }
 }
-
-const walletStore = proxy(new WalletStore()).makePersistent(
-  env.VITE_ENCRYPT_KEY
-)
-
-if (walletStore.cachedProvider) void walletStore.connect()
-
-export default walletStore
